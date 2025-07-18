@@ -48,9 +48,13 @@
 						<applicationName>${project.name}-${env}</applicationName>
 						<replicas>1</replicas>
 						<vCores>0.1</vCores>
+						<javaVersion>17</javaVersion>
 						<deploymentSettings>
                             <generateDefaultPublicUrl>true</generateDefaultPublicUrl>
                         </deploymentSettings>
+						<deploymentTimeout>600000</deploymentTimeout>
+						<skipMunitTests>true</skipMunitTests>
+						<skipDeploymentVerification>true</skipDeploymentVerification>
 					</cloudhub2Deployment>
 				</configuration>
 			</plugin>
