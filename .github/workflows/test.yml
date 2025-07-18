@@ -29,7 +29,13 @@ jobs:
         with:
           distribution: "zulu"
           java-version: 17
-      
+
+      - name: Bump version
+        uses: mickem/gh-action-bump-maven-version
+        with:
+          bump-command: mvn org.codehaus.mojo:versions-maven-plugin:2.7:set-property -Dproperty=revision -DnewVersion=@NEW_VERSION@
+
+   
       - name: Publish to Exchange
         run: |
           mvn deploy --settings .maven/settings.xml -DskipMunitTests \
