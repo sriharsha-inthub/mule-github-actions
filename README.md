@@ -16,4 +16,16 @@
 - Pull Request [ TEST -> PROD ] & when closed/merged will Deploy to PROD Env
 
 ## Ensure you update the pom version
- ==bump pom version==
+```
+<version>1.0.8</version>
+```
+
+## Create Secrets in the repo.
+CONNECTED_APP_CLIENT_ID=Your connected app client id
+CONNECTED_APP_CLIENT_SECRET=Your connected app client secret  
+
+> Ensure it has right permissions
+
+## Create Variables in the repo.
+ENV_TEST=test
+END_PROD=prod
