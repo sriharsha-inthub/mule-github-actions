@@ -39,12 +39,13 @@ jobs:
   #      name: munit-test-reports
   #      path: target/site/munit/coverage/
 
-  build:
+  build_deploy:
     #needs: test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout this repo
       uses: actions/checkout@v4
+    
     - name: Cache dependencies
       uses: actions/cache@v4
       with:
@@ -52,55 +53,30 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
+    
     - name: Set up JDK 14
       uses: actions/setup-java@v3
       with:
         distribution: 'zulu'
         java-version: 17
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml -DskipMunitTests
-    - name: Stamp artifact file name with commit hash
-      run: |
-        artifactName1=$(ls target/*.jar | head -1)
-        commitHash=$(git rev-parse --short "$GITHUB_SHA")
-        artifactName2=$(ls target/*.jar | head -1 | sed "s/.jar/-$commitHash.jar/g")
-        mv $artifactName1 $artifactName2
-    - name: Upload artifact 
-      uses: actions/upload-artifact@master
-      with:
-          name: artifacts
-          path: target/*.jar
-    - name: Upload to exchange 
+    
+    - name: Publish to exchange
       env:
-        nexus_username: ${{ secrets.nexus_username }}
-        nexus_password: ${{ secrets.nexus_password }}
-      run: mvn deploy --file pom.xml -Dnexus_username="$USERNAME" -Dnexus_password="$PASSWORD"
+        USERNAME: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+        PASSWORD: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+      run: mvn deploy --settings .maven/settings.xml \
+           -DskipMunitTests \
+           -Dclient.id="$USERNAME" \
+           -Dclient.secret="$PASSWORD"
+
+    - name: Deploy to Cloudhub 2.0
+      env:
+        USERNAME: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+        PASSWORD: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+      run: mvn deploy --settings .maven/settings.xml \
+           -DskipMunitTests \
+           -DmuleDeploy
+           -Dclient.id="$USERNAME" \
+           -Dclient.secret="$PASSWORD"
         
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:    
-    - name: Checkout this repo
-      uses: actions/checkout@v4
-    - name: Cache dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-    - uses: actions/download-artifact@master
-      with:
-        name: artifacts
-    - name: Deploy to test
-      env:
-        USERNAME: ${{ secrets.anypoint_platform_username }}
-        PASSWORD: ${{ secrets.anypoint_platform_password }}
-        ENV_TEST:   ${{ vars.env_test }}
-      run: |
-        artifactName=$(ls *.jar | head -1)
-        mvn mule:deploy -DskipMunitTests -DmuleDeploy \
-         -Dmule.artifact=$artifactName \
-         -Danypoint.username="$USERNAME" \
-         -Danypoint.password="$PASSWORD" \
-         -Danypoint.environment="$ENV_TEST" \
+  
