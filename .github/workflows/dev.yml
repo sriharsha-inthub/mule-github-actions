@@ -1,4 +1,4 @@
-name: Build and Test [MUNITS]
+name: Build and Test [DEV-MUNITS]
 
 on:
   push:
@@ -30,8 +30,8 @@ jobs:
 
       - name: Test with Maven
         run: mvn test --settings .maven/settings.xml \
-          -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-          -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+             -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
       
       - name: Upload MUnit reports
         uses: actions/upload-artifact@master
