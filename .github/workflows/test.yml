@@ -11,72 +11,36 @@ on:
 
     
 jobs:
-  #test:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #  - name: Checkout this repo
-  #    uses: actions/checkout@v4
-  #  - name: Cache dependencies
-  #    uses: actions/cache@v4
-  #    with:
-  #      path: ~/.m2/repository
-  #      key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-  #      restore-keys: |
-  #        ${{ runner.os }}-maven-
-  #  - name: Set up JDK 17
-  #    uses: actions/setup-java@v3
-  #    with:
-  #      distribution: 'zulu'
-  #      java-version: 17
-  #  - name: Test with Maven
-  #    env:
-  #      nexus_username: ${{ secrets.nexus_username }}
-  #      nexus_password: ${{ secrets.nexus_password }}
-  #    run: mvn test --settings .maven/settings.xml
-  #  - name: Upload MUnit reports
-  #    uses: actions/upload-artifact@master
-  #    with:
-  #      name: munit-test-reports
-  #      path: target/site/munit/coverage/
-
-  build_deploy:
-    #needs: test
+  build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout this repo
-      uses: actions/checkout@v4
-    
-    - name: Cache dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-    
-    - name: Set up JDK 14
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: 17
-    
-    - name: Publish to exchange
-      env:
-        USERNAME: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-        PASSWORD: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-      run: mvn deploy --settings .maven/settings.xml \
-           -DskipMunitTests \
-           -Dclient.id="$USERNAME" \
-           -Dclient.secret="$PASSWORD"
+      - name: Checkout this repo
+        uses: actions/checkout@v4
 
-    - name: Deploy to Cloudhub 2.0
-      env:
-        USERNAME: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-        PASSWORD: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-      run: mvn deploy --settings .maven/settings.xml \
-           -DskipMunitTests \
-           -DmuleDeploy
-           -Dclient.id="$USERNAME" \
-           -Dclient.secret="$PASSWORD"
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: 17
+      
+      - name: Publish to Exchange
+        run: |
+          mvn deploy --settings .maven/settings.xml -DskipMunitTests \
+          -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+          -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+
+      - name: Deploy to CloudHub 2.0
+        run: |
+          mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
+          -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+          -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}" \
+          -Ddecryption.key="${{ secrets.DECRYPTION_KEY }}"
         
   
