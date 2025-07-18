@@ -15,4 +15,5 @@
 - Pull Request [ DEV  -> TEST ] & when closed/merged will Deploy to Exchange & TEST Env  
 - Pull Request [ TEST -> PROD ] & when closed/merged will Deploy to PROD Env
 
-## Ensure you update the pom version ==[bump version]==
+## Ensure you update the pom version
+ ==bump pom version==
