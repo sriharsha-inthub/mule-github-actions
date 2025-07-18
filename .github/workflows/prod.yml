@@ -1,10 +1,8 @@
-name: Build and Deploy [TEST]
+name: Build and Deploy [PROD]
 
 on:
-  #push:
-  #  branches: [ test ]
   pull_request:
-    branches: [ test ]
+    branches: [ main ]
     types: [ closed ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -31,17 +29,17 @@ jobs:
           distribution: "zulu"
           java-version: 17
 
-      - name: Publish to Exchange
-        run: |
-          mvn deploy --settings .maven/settings.xml -DskipMunitTests \
-          -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-          -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+      #- name: Publish to Exchange
+      #  run: |
+      #    mvn deploy --settings .maven/settings.xml -DskipMunitTests \
+      #    -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+      #    -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
       - name: Deploy to CloudHub 2.0
         run: |
           mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
           -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
           -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}" \
-          -Denv="${{ vars.ENV_TEST }}"
+          -Denv="${{ vars.ENV_PROD }}"
         
   
