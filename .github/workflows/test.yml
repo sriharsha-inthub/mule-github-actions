@@ -70,6 +70,14 @@ jobs:
       with:
           name: artifacts
           path: target/*.jar
+    - name: Upload to exchange 
+      env:
+        nexus_username: ${{ secrets.nexus_username }}
+        nexus_password: ${{ secrets.nexus_password }}
+      run: mvn deploy --file pom.xml -Dnexus_username ="$USERNAME" -Dnexus_password="$PASSWORD" \
+      with:
+          name: artifacts
+          path: target/*.jar
         
   deploy:
     needs: build
