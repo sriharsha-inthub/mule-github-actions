@@ -6,11 +6,6 @@
   </pluginGroups>
 
   <servers>
-    <server>
-      <id>MuleRepository</id>
-      <username>${nexus_username}</username>
-      <password>${nexus_password}</password>
-    </server>
     <!-- connected app's required scopes: https://help.salesforce.com/s/articleView?id=001119708&type=1 -->
     <server>
       <id>Repository</id> <!-- make sure this matches the serverId property in pom.xml -->
@@ -19,26 +14,4 @@
     </server>
   </servers>
 
-  <profiles>
-    <profile>
-      <id>Mule</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <repositories>
-        <repository>
-          <id>MuleRepository</id>
-          <name>MuleRepository</name>
-          <url>https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/</url>
-          <layout>default</layout>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>     
-      </repositories>
-    </profile>
-  </profiles>
 </settings>
