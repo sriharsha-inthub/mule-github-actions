@@ -74,7 +74,7 @@ jobs:
       env:
         nexus_username: ${{ secrets.nexus_username }}
         nexus_password: ${{ secrets.nexus_password }}
-      run: mvn deploy --file pom.xml -Dnexus_username ="$USERNAME" -Dnexus_password="$PASSWORD" \
+      run: mvn deploy --file pom.xml -Dnexus_username="$USERNAME" -Dnexus_password="$PASSWORD"
         
   deploy:
     needs: build
