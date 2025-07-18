@@ -21,11 +21,12 @@
 ```
 
 ## Create Secrets in the repo.
-CONNECTED_APP_CLIENT_ID=Your connected app client id
+CONNECTED_APP_CLIENT_ID=Your connected app client id  
 CONNECTED_APP_CLIENT_SECRET=Your connected app client secret  
 
-> Ensure it has right permissions
+> Ensure it has right permissions  
+> Created here https://anypoint.mulesoft.com/accounts/connectedApps
 
 ## Create Variables in the repo.
-ENV_TEST=test
-END_PROD=prod
+ENV_TEST=test  
+END_PROD=prod  
