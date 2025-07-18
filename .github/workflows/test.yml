@@ -5,6 +5,10 @@ on:
     branches: [ test ]
   #pull_request:
   #  branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
     
 jobs:
   test:
@@ -27,7 +31,6 @@ jobs:
       env:
         nexus_username: ${{ secrets.nexus_username }}
         nexus_password: ${{ secrets.nexus_password }}
-        KEY: ${{ secrets.decryption_key }}
       run: mvn test --settings .maven/settings.xml
     - name: Upload MUnit reports
       uses: actions/upload-artifact@master
@@ -86,10 +89,11 @@ jobs:
       env:
         USERNAME: ${{ secrets.anypoint_platform_username }}
         PASSWORD: ${{ secrets.anypoint_platform_password }}
+        ENV_TEST:   ${{ vars.env_test }}
       run: |
         artifactName=$(ls *.jar | head -1)
         mvn deploy -DskipMunitTests -DmuleDeploy \
          -Dmule.artifact=$artifactName \
          -Danypoint.username="$USERNAME" \
          -Danypoint.password="$PASSWORD" \
-         -Danypoint.environment=test \
+         -Danypoint.environment="$ENV_TEST" \
